@@ -1,4 +1,5 @@
-/* Renders the page from window.PORTFOLIO (data/content.js). */
+/* Renders the page from window.PORTFOLIO (data/content.js or data/content-embedded.js).
+   Every section is optional: if a page leaves out a container, that section is skipped. */
 (function () {
   "use strict";
 
@@ -12,8 +13,18 @@
   const esc = (s) =>
     String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const hasUrl = (l) => l && typeof l.url === "string" && l.url.trim() !== "";
+  // Pages in a subfolder set <html data-base="../">, so content paths like "assets/img/x.png"
+  // are written once, relative to the site root, and resolved here.
+  const BASE = document.documentElement.dataset.base || "";
+  const asset = (u) => (u && !/^([a-z]+:|\/|#|\.\.\/)/i.test(u) ? BASE + u : u);
+  const fill = (sel, html) => {
+    const el = $(sel);
+    if (el) el.innerHTML = html;
+  };
 
-  const CATEGORIES = {
+  // A content file can define its own categories: { key: { label, badge, art } },
+  // where `art` picks the placeholder drawing (research | academic | engineering).
+  const CATEGORIES = data.categories || {
     research: { label: "Research", badge: "badge-accent" },
     academic: { label: "Academic", badge: "badge-warm" },
     engineering: { label: "Engineering", badge: "" }
@@ -50,7 +61,7 @@
   function actionButtons() {
     const L = p.links || {};
     const btns = [];
-    if (p.cv) btns.push(`<a class="btn btn-primary" href="${esc(p.cv)}" target="_blank" rel="noopener">${ICONS.cv}CV</a>`);
+    if (p.cv) btns.push(`<a class="btn btn-primary" href="${esc(asset(p.cv))}" target="_blank" rel="noopener">${ICONS.cv}CV</a>`);
     if (emails[0]) btns.push(`<a class="btn" href="mailto:${esc(emails[0])}">${ICONS.email}Email</a>`);
     if (L.scholar) btns.push(`<a class="btn" href="${esc(L.scholar)}" target="_blank" rel="noopener">${ICONS.scholar}Scholar</a>`);
     if (L.github) btns.push(`<a class="btn" href="${esc(L.github)}" target="_blank" rel="noopener">${ICONS.github}GitHub</a>`);
@@ -59,22 +70,36 @@
     return btns.join("");
   }
   const emails = [].concat((p.links && (p.links.emails || p.links.email)) || []);
-  $("#hero-actions").innerHTML = actionButtons();
-  $("#contact-actions").innerHTML = actionButtons();
-  $("#email-list").innerHTML = emails
+  fill("#hero-actions", actionButtons());
+  fill("#contact-actions", actionButtons());
+  fill("#email-list", emails
     .map((e) => `<li>${ICONS.email}<a href="mailto:${esc(e)}">${esc(e)}</a></li>`)
-    .join("");
+    .join(""));
 
   /* ---------------- About ---------------- */
-  if (p.photo) {
+  if (p.photo && $("#about-photo")) {
     const img = $("#about-photo");
-    img.src = p.photo;
+    img.src = asset(p.photo);
     img.hidden = false;
   }
-  $("#about-text").innerHTML = (data.about || []).map((t) => `<p>${esc(t)}</p>`).join("");
-  $("#interests").innerHTML = (data.researchInterests || []).map((t) => `<li>${esc(t)}</li>`).join("");
+  fill("#about-text", (data.about || []).map((t) => `<p>${esc(t)}</p>`).join(""));
+  fill("#interests", (data.researchInterests || []).map((t) => `<li>${esc(t)}</li>`).join(""));
+
+  fill(
+    "#capabilities-grid",
+    (data.capabilities || [])
+      .map(
+        (c) => `
+      <article class="card capability">
+        <h3>${esc(c.title)}</h3>
+        <p>${esc(c.text)}</p>
+        ${c.tags && c.tags.length ? `<div class="tags">${c.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join("")}</div>` : ""}
+      </article>`
+      )
+      .join("")
+  );
   // Education details may contain simple HTML (e.g. <strong>), so they are not escaped.
-  $("#education").innerHTML = (data.education || [])
+  fill("#education", (data.education || [])
     .map(
       (e) => `
       <article class="card edu-item">
@@ -86,7 +111,7 @@
         ${e.details && e.details.length ? `<ul>${e.details.map((d) => `<li>${d}</li>`).join("")}</ul>` : ""}
       </article>`
     )
-    .join("");
+    .join(""));
 
   /* ---------------- Publications ---------------- */
   function boldSelf(authors) {
@@ -97,10 +122,10 @@
   function linkChips(links) {
     return (links || [])
       .filter(hasUrl)
-      .map((l) => `<a class="link-chip" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`)
+      .map((l) => `<a class="link-chip" href="${esc(asset(l.url))}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`)
       .join("");
   }
-  $("#pub-list").innerHTML = (data.publications || [])
+  fill("#pub-list", (data.publications || [])
     .map((pub) => {
       const statusClass = /published/i.test(pub.status) ? "badge-accent" : "badge-warm";
       const chips = linkChips(pub.links);
@@ -117,7 +142,7 @@
         ${chips ? `<div class="pub-links">${chips}</div>` : ""}
       </li>`;
     })
-    .join("");
+    .join(""));
 
   /* ---------------- Projects ---------------- */
   const projects = (data.projects || [])
@@ -131,8 +156,9 @@
 
   function thumb(pr) {
     const src = pr.thumb || pr.image;
-    if (src) return `<div class="project-thumb"><img src="${esc(src)}" alt="" loading="lazy"></div>`;
-    return `<div class="project-thumb placeholder" aria-hidden="true">${PLACEHOLDERS[pr.category] || PLACEHOLDERS.research}</div>`;
+    if (src) return `<div class="project-thumb"><img src="${esc(asset(src))}" alt="" loading="lazy"></div>`;
+    const art = (CATEGORIES[pr.category] && CATEGORIES[pr.category].art) || pr.category;
+    return `<div class="project-thumb placeholder" aria-hidden="true">${PLACEHOLDERS[art] || PLACEHOLDERS.engineering}</div>`;
   }
 
   function renderFilters() {
@@ -188,11 +214,11 @@
     const chips = linkChips(pr.links);
     const gallery = (pr.gallery || [])
       .map(
-        (g) => `<figure><a href="${esc(g.src)}" target="_blank" rel="noopener"><img src="${esc(g.src)}" alt="${esc(g.caption || "")}" loading="lazy"></a>${g.caption ? `<figcaption>${esc(g.caption)}</figcaption>` : ""}</figure>`
+        (g) => `<figure><a href="${esc(asset(g.src))}" target="_blank" rel="noopener"><img src="${esc(asset(g.src))}" alt="${esc(g.caption || "")}" loading="lazy"></a>${g.caption ? `<figcaption>${esc(g.caption)}</figcaption>` : ""}</figure>`
       )
       .join("");
     $("#dialog-body").innerHTML = `
-      ${pr.image ? `<div class="dialog-hero"><img src="${esc(pr.image)}" alt=""></div>` : ""}
+      ${pr.image ? `<div class="dialog-hero"><img src="${esc(asset(pr.image))}" alt=""></div>` : ""}
       <div class="dialog-content">
         <div class="project-meta">${categoryBadge(pr.category)}<span class="date">${esc(pr.date)}</span></div>
         <h3 id="dialog-title">${esc(pr.title)}</h3>
@@ -225,7 +251,7 @@
   renderProjects();
 
   /* ---------------- Experience ---------------- */
-  $("#timeline").innerHTML = (data.experience || [])
+  fill("#timeline", (data.experience || [])
     .map(
       (x) => `
       <li class="tl-item reveal">
@@ -235,12 +261,13 @@
         </div>
         <p class="tl-org">${esc(x.org)} · ${esc(x.location)}</p>
         ${x.bullets && x.bullets.length ? `<ul>${x.bullets.map((b) => `<li>${esc(b)}</li>`).join("")}</ul>` : ""}
+        ${x.tags && x.tags.length ? `<div class="tags tl-tags">${x.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join("")}</div>` : ""}
       </li>`
     )
-    .join("");
+    .join(""));
 
   /* ---------------- Teaching ---------------- */
-  $("#teach-grid").innerHTML = (data.teaching || [])
+  fill("#teach-grid", (data.teaching || [])
     .map(
       (t) => `
       <article class="card teach-card">
@@ -250,10 +277,10 @@
         <p>${esc(t.duties)}</p>
       </article>`
     )
-    .join("");
+    .join(""));
 
   /* ---------------- Skills / certs / awards ---------------- */
-  $("#skills-grid").innerHTML = (data.skills || [])
+  fill("#skills-grid", (data.skills || [])
     .map(
       (g) => `
       <div class="card skill-group">
@@ -261,16 +288,16 @@
         <div class="tags">${g.items.map((s) => `<span class="tag">${esc(s)}</span>`).join("")}</div>
       </div>`
     )
-    .join("");
+    .join(""));
 
-  $("#certs").innerHTML = (data.certifications || [])
+  fill("#certs", (data.certifications || [])
     .map((c) => {
-      const title = hasUrl(c) ? `<a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.title)}</a>` : esc(c.title);
+      const title = hasUrl(c) ? `<a href="${esc(asset(c.url))}" target="_blank" rel="noopener">${esc(c.title)}</a>` : esc(c.title);
       return `<li>${title} <span class="issuer">· ${esc(c.issuer)}</span></li>`;
     })
-    .join("");
+    .join(""));
 
-  $("#awards").innerHTML = (data.awards || []).map((a) => `<li>${esc(a)}</li>`).join("");
+  fill("#awards", (data.awards || []).map((a) => `<li>${esc(a)}</li>`).join(""));
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 

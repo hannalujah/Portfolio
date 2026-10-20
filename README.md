@@ -5,8 +5,11 @@ My personal academic portfolio. It is a static site (plain HTML, CSS and JS with
 ## Structure
 
 ```
-index.html            page layout (rarely needs editing)
+index.html            landing page: lets visitors choose research or embedded
+research/index.html   research portfolio  -> hannalujah.github.io/research/
+embedded/index.html   embedded portfolio  -> hannalujah.github.io/embedded/
 data/content.js       ALL the content: profile, publications, projects, experience...
+data/content-embedded.js  embedded-page wording + which projects it shows
 assets/css/style.css  styles (colors are defined at the top as variables)
 assets/js/main.js     renders content.js into the page
 assets/img/           favicon, profile photo, project images
@@ -45,19 +48,19 @@ Open `data/content.js`, find `projects: [`, and paste a new entry into the list:
 
 Images look best at a 16:9 ratio, about 1200×675 px. Keep them under about 500 KB each.
 
-## Previewing locally
+## The embedded portfolio (`/embedded/`)
 
-Open `index.html` directly in a browser, or run a local server:
+A second version of the site aimed at embedded and flight-software roles is served at `https://hannalujah.github.io/embedded/`.
 
+- `embedded/index.html`: page layout (Experience first, with a circuit-board hero animation from `assets/js/bus.js`)
+- `data/content-embedded.js`: wording for this page (role, tagline, about, "What I work on", skills) plus **which projects appear and under which category**
+- `assets/CV_Haniyeh_Budaqi_Embedded.pdf`: the CV linked from this page
+
+Projects, experience, education and publications all come from `data/content.js`, so you edit each one in only one place. To show a project on the embedded page, add its `id` to the `projects` list in `content-embedded.js`, for example:
+
+```js
+pick("my-new-firmware-project", { category: "firmware", featured: true }),
 ```
-python -m http.server 8000
-```
 
-Then open http://localhost:8000.
+You can also override any field for this page only, such as `details` or `summary`.
 
-## Deploying to GitHub Pages
-
-1. Create a GitHub repository named **`<your-username>.github.io`**.
-2. Push this folder to it on the `main` branch.
-3. In the repository, go to **Settings → Pages → Build and deployment**, choose **Deploy from a branch**, and select `main` / `(root)`.
-4. After a minute or so, the site is live at `https://<your-username>.github.io`.

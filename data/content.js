@@ -60,14 +60,8 @@ window.PORTFOLIO = {
       venue: "Acta Astronautica",
       status: "Submitted",
       date: "Sep 2026",
-      links: [
-        { label: "Manuscript", url: "" }, // TODO add manuscript link
-        { label: "Code", url: "https://github.com/hannalujah/cvae-projected-nrho-dro" }
-      ],
-      highlights: [
-        "Developed cVAE-projected, a projection-constrained conditional VAE that generates initial-guess NRHO–DRO transfers in the Earth–Moon CR3BP, trained on 57,356 corrected trajectories.",
-        "Achieved 80% guess-level success and 99.6%+ pair-level coverage across 3,133 held-out orbit pairs, outperforming Lambert and Poincaré-mapping baselines in coverage and compute cost."
-      ]
+      links: [],
+      highlights: []
     },
     {
       title: "Postural Responses to Mediolateral Rotations",
@@ -111,35 +105,6 @@ window.PORTFOLIO = {
       thumb: "",
       image: "",
       links: [{ label: "Code", url: "https://github.com/hannalujah/attitude-prox-ppo" }]
-    },
-    {
-      id: "cvae-nrho-dro",
-      title: "Generative Initialization of NRHO–DRO Transfers",
-      category: "research",
-      date: "2026",
-      featured: true,
-      tools: ["Python", "PyTorch", "Conditional VAE", "CR3BP"],
-      summary:
-        "A projection-constrained conditional VAE that generates initial guesses for NRHO-to-DRO transfers in the Earth–Moon CR3BP, for seeding a differential corrector.",
-      details: [
-        "For a queried NRHO/DRO pair, the network predicts a departure velocity, time of flight, and departure phase. A physics-based projection step then puts the departure position exactly on the origin orbit before the guess is passed to the corrector.",
-        "Trained on 57,356 corrected transfers covering 6,845 distinct orbit pairs sampled from the JPL periodic-orbit catalogs.",
-        "Raises guess-level physical success from 60.9% / 55.2% (schedule-matched Lambert) to 80.0% / 78.5% on partially-seen / completely-unseen test orbits, with pair-level success@5 above 99.6% on both.",
-        "Compared with an automated Poincaré-mapping baseline, it gives broader pair-level coverage at about a quarter of the compute cost per physical success.",
-        "An ablation without the projection step converges numerically almost as often but yields essentially no physically valid transfers, which shows the projection is essential."
-      ],
-      thumb: "assets/img/projects/cvae-thumb.jpg",
-      image: "assets/img/projects/cvae-graphical-abstract.png",
-      gallery: [
-        { src: "assets/img/projects/cvae-pipeline.png", caption: "cVAE-projected pipeline" },
-        { src: "assets/img/projects/cvae-orbit-families.png", caption: "Sampled NRHO and DRO families (Jacobi constant vs. period)" },
-        { src: "assets/img/projects/cvae-raw-vs-projected.png", caption: "Raw vs. projected initial guesses" },
-        { src: "assets/img/projects/cvae-cost-coverage.png", caption: "Cost vs. coverage against the baselines" }
-      ],
-      links: [
-        { label: "Code", url: "https://github.com/hannalujah/cvae-projected-nrho-dro" },
-        { label: "Manuscript", url: "" }
-      ]
     },
     {
       id: "mars-adcs",
@@ -205,6 +170,30 @@ window.PORTFOLIO = {
       ],
       thumb: "",
       image: "",
+      links: []
+    },
+    {
+      id: "social-robot-pcbs",
+      title: "Head & Power Boards for a Social Robot",
+      category: "engineering",
+      date: "Oct 2025 – Jan 2026",
+      featured: false,
+      tools: ["Altium Designer", "PCB Design", "ESP32"],
+      summary:
+        "Two 2-layer PCBs for a social robot: an ESP32 head board for ear LEDs and fans, and a power board for batteries and fan/LCD/DC-motor power. Both worked on the first fabrication run.",
+      details: [
+        "The robot needed a head board to control its ear LEDs and fans with an ESP32, and a power board to connect the batteries and the fan, LCD and DC-motor power sockets.",
+        "I was responsible for designing both boards in Altium Designer, as 2-layer PCBs.",
+        "Both boards worked reliably on the first fabrication run.",
+        "Sharif Social Robotics Lab."
+      ],
+      thumb: "assets/img/projects/pcb-thumb.jpg",
+      image: "",
+      gallery: [
+        { src: "assets/img/projects/pcb-power-board-a.png", caption: "Power board, 3D render" },
+        { src: "assets/img/projects/pcb-power-board-b.png", caption: "Power board, second view" },
+        { src: "assets/img/projects/pcb-head-board.png", caption: "Head board with the ESP32 module" }
+      ],
       links: []
     },
     {
