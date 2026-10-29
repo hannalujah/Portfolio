@@ -44,7 +44,7 @@ window.PORTFOLIO = {
       location: "Tehran, Iran",
       dates: "Nov 2020 – Jul 2025",
       details: [
-        "<strong>GPA:</strong> 3.44 / 4.00 (16.38 / 20.00)",
+        "<strong>GPA:</strong> 16.69 / 20.00",
         "<strong>Focus areas:</strong> Dynamics, Robotics, Control Systems",
         "<strong>Relevant coursework:</strong> Modern Control Theory, Robotics, Orbital Mechanics",
         "<strong>Thesis:</strong> “Postural Responses to Mediolateral Rotations,” supervised by Dr. Saeed Behzadipour"
