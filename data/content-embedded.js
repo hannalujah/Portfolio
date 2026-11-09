@@ -35,7 +35,7 @@
       ...base.profile,
       role: "Embedded Software Engineer · Real-Time Firmware",
       tagline:
-        "I build real-time C/C++ firmware (FreeRTOS, STM32, ESP32) for embedded and robotic systems, backed by a research background in spacecraft GNC and astrodynamics for autonomous rendezvous and proximity operations.",
+        "I build real-time C/C++ firmware (Zephyr, FreeRTOS, STM32, ESP32) for embedded and robotic systems, backed by a research background in spacecraft GNC and astrodynamics for autonomous rendezvous and proximity operations.",
       cv: "assets/CV_Haniyeh_Budaqi_Embedded.pdf"
     },
 
@@ -47,8 +47,8 @@
     capabilities: [
       {
         title: "Real-time firmware",
-        text: "FreeRTOS applications, interrupt- and DMA-driven drivers, and non-blocking state machines that keep the main loop free.",
-        tags: ["C/C++", "FreeRTOS", "STM32", "ESP32-S3"]
+        text: "Zephyr and FreeRTOS applications, interrupt- and DMA-driven drivers, and non-blocking state machines that keep the main loop free.",
+        tags: ["C/C++", "Zephyr", "FreeRTOS", "STM32", "ESP32-S3"]
       },
       {
         title: "Communication interfaces",
@@ -76,6 +76,7 @@
 
     // Order here = order on the page. Featured ones are sorted first.
     projects: [
+      pick("zephyr-energy-monitor", { category: "firmware", featured: true }),
       pick("stm32-rc522", { category: "firmware", featured: true }),
       pick("social-robot-pcbs", { category: "hardware", featured: true }),
       pick("dual-servo-platform", { category: "hardware", featured: false }),
@@ -87,7 +88,7 @@
     experience: base.experience.map((x) => ({ ...x, tags: jobTags[x.org] || [] })),
 
     skills: [
-      { group: "Embedded & Real-Time", items: ["STM32", "ESP32 / ESP32-S3", "AVR", "FreeRTOS", "STM32 HAL", "Interrupts & DMA"] },
+      { group: "Embedded & Real-Time", items: ["STM32", "ESP32 / ESP32-S3", "AVR", "Zephyr RTOS", "Devicetree & Kconfig", "FreeRTOS", "STM32 HAL", "Interrupts & DMA"] },
       { group: "Interfaces & Protocols", items: ["CAN", "SPI", "I2C", "UART", "BLE", "Bluetooth Classic"] },
       { group: "Programming", items: ["C", "C++", "Python", "MATLAB / Simulink", "Kotlin (Android)", "Git"] },
       { group: "Hardware", items: ["Altium Designer", "2-layer PCB design", "Load-cell / HX711 DAQ", "SolidWorks"] },

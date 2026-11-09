@@ -197,6 +197,24 @@ window.PORTFOLIO = {
       links: []
     },
     {
+      id: "zephyr-energy-monitor",
+      title: "IoT Energy Monitoring Node on Zephyr RTOS",
+      category: "engineering",
+      date: "Mar 2026 – Apr 2026",
+      featured: false,
+      tools: ["C", "Zephyr RTOS", "ESP32", "Devicetree"],
+      summary:
+        "Zephyr ADC firmware for an ESP32 node that samples voltage and shunt current and computes real-time power, part of a team project to build a LoRaWAN-connected energy-harvesting monitor.",
+      details: [
+        "Part of a team project to build energy-monitoring firmware that does not depend on any one board or sensor, for IoT nodes reporting over LoRaWAN.",
+        "Brought up the Zephyr ADC subsystem on the ESP32: one channel samples the supply voltage and another samples the voltage across a shunt resistor. The firmware converts both readings and computes power in real time.",
+        "Configured the ADC channels (gain, reference, resolution, acquisition time) in devicetree overlays and accessed them through aliases. The application code does not change between boards; a new board only needs its own overlay."
+      ],
+      thumb: "",
+      image: "",
+      links: []
+    },
+    {
       id: "stm32-rc522",
       title: "Non-Blocking RC522 RFID Driver for STM32",
       category: "engineering",
